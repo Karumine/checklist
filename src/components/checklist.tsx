@@ -223,7 +223,7 @@ const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technical
     // สร้างตาราง Equipment
     const renderEquipmentTable = () => (
         <div className="table-responsive mb-5">
-            <h4 className="fw-bold text-primary mb-3">Equipment check list</h4>
+            <h4 className="fw-bold text-primary mb-3">Equipment check list11111111111111111</h4>
             <table className="table table-bordered table-striped text-center">
                 <thead className="table-light">
                     <tr>
