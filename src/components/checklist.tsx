@@ -1,4 +1,3 @@
-// src/components/checklist.tsx
 import React, { useState, useMemo } from 'react';
 
 // กำหนด Interface สำหรับข้อมูลตาราง Equipment
@@ -47,12 +46,12 @@ const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technical
     // สร้างรายการ Physicals ใหม่ตามที่ผู้ใช้ร้องขอ
     const newPhysicalItems: PhysicalChecklistItem[] = [
         { id: 'ph', item: 'Plant Housing', value: '' },
-        { id: 'bp', 'item': 'Body paint', value: '' },
         { id: 'cb', item: 'Chassis base', value: '' },
-        { id: 'orf', item: 'Opr risk free', value: '' },
         { id: 'v', item: 'Ventilation', value: '' },
-        { id: 's', item: 'Staffing', value: '' },
         { id: 'sd', item: 'Safety device', value: '' },
+        { id: 'bp', 'item': 'Body paint', value: '' },
+        { id: 'orf', item: 'Opr risk free', value: '' },
+        { id: 's', item: 'Staffing', value: '' },
         { id: 'rh', item: 'Run Hours', value: '' },
     ];
 
@@ -222,7 +221,7 @@ const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technical
 
     // สร้างตาราง Equipment
     const renderEquipmentTable = () => (
-        <div className="table-responsive mb-5">
+        <div className="table-responsive mb-5 no-page-break">
             <h4 className="fw-bold text-primary mb-3">Equipment check list</h4>
             <table className="table table-bordered table-striped text-center">
                 <thead className="table-light">
@@ -230,8 +229,8 @@ const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technical
                         <th scope="col" style={{ width: '5%' }}></th>
                         <th scope="col" style={{ width: '15%' }}>Item</th>
                         <th scope="col" style={{ width: '15%' }}>Actual</th>
-                        <th scope="col" colSpan={2} style={{ width: '20%' }}>Condition</th>
-                        <th scope="col" style={{ width: '35%' }}>Remark</th>
+                        <th scope="col" colSpan={2} style={{ width: '25%' }}>Condition</th>
+                        <th scope="col" style={{ width: '40%' }}>Remark</th>
                     </tr>
                     <tr>
                         <th scope="col"></th>
@@ -310,28 +309,57 @@ const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technical
 
     // สร้างตาราง Physicals
     const renderPhysicalsTable = () => (
-        <div className="container mt-5">
+        <div className="container">
             <div className="card shadow-sm border-0 p-3">
                 <div className="card-body">
                     <h4 className="fw-bold text-primary mb-3">Physicals Check list</h4>
-                    <div className="row g-3">
-                        {newPhysicalItems.map((item) => (
-                            <div key={item.id} className="col-md-6 d-flex align-items-center mb-2">
-                                <div className="d-flex w-100 align-items-center">
-                                    <span className="me-2 text-start flex-grow-1">{item.item}</span>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        value={physicalValues[item.item] || ''}
-                                        onChange={(e) => setPhysicalValues({ ...physicalValues, [item.item]: e.target.value })}
-                                        style={{
-                                            width: '50px',
-                                            
-                                        }}
-                                    />
+                    <div className="row">
+                        <div className="col-md-6 border-end">
+                            {/* คอลัมน์ซ้าย */}
+                            {newPhysicalItems.slice(0, 4).map((item) => (
+                                <div key={item.id} className="d-flex align-items-center mb-2">
+
+                                    <div className="d-flex w-100 align-items-center">
+                                        <span className="me-2 text-start flex-grow-1">{item.item}</span>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={physicalValues[item.item] || ''}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                if (!isNaN(Number(value)) || value === '') {
+                                                    setPhysicalValues({ ...physicalValues, [item.item]: value });
+                                                }
+                                            }}
+                                            style={{ width: '50px' }}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
+                        <div className="col-md-6">
+                            {/* คอลัมน์ขวา */}
+                            {newPhysicalItems.slice(4, 8).map((item) => (
+                                <div key={item.id} className="d-flex align-items-center mb-2">
+
+                                    <div className="d-flex w-100 align-items-center">
+                                        <span className="me-2 text-start flex-grow-1">{item.item}</span>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={physicalValues[item.item] || ''}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                if (!isNaN(Number(value)) || value === '') {
+                                                    setPhysicalValues({ ...physicalValues, [item.item]: value });
+                                                }
+                                            }}
+                                            style={{ width: '50px' }}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -340,7 +368,7 @@ const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technical
 
     // สร้างตาราง Technical-Operation
     const renderTechnicalTable = () => (
-        <div className="table-responsive mb-5">
+        <div className="table-responsive mb-5 no-page-break">
             <h4 className="fw-bold text-primary mb-3">Technical- Operation</h4>
             <div className="mb-3">
                 <label htmlFor="operationTesting" className="form-label fw-bold">Operation Testing</label>
@@ -435,7 +463,7 @@ const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technical
 
     // สร้างส่วน General Comments
     const renderGeneralComments = () => (
-        <div className="container mt-5">
+        <div className="container mt-5 no-page-break">
             <h4 className="fw-bold text-primary mb-3">General Comments</h4>
             <div className="card shadow-sm border-0 p-3">
                 <div className="card-body">
@@ -465,7 +493,7 @@ const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technical
 
     // สร้างส่วน Total Score
     const renderTotalScore = () => (
-        <div className="container mt-4 mb-5">
+        <div className="container mt-4 mb-5 no-page-break">
             <div className="d-flex flex-column align-items-end">
                 <div className="d-flex align-items-center mb-2">
                     <h5 className="me-2 mb-0">คะแนนที่ได้:</h5>
@@ -483,73 +511,316 @@ const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technical
         </div>
     );
 
+    // สร้างส่วนปุ่มควบคุม
+    const renderButtons = () => (
+        <div className="d-flex justify-content-end mt-4 d-print-none">
+            <button
+                className="btn btn-secondary me-2"
+                onClick={() => window.print()}
+            >
+                พิมพ์ (Print)
+            </button>
+            <button
+                className="btn btn-primary"
+                onClick={() => {
+                    // TODO: เพิ่มการทำงานสำหรับปุ่ม 'ถัดไป' ที่นี่
+                    alert('ปุ่ม "ถัดไป" ถูกคลิกแล้ว');
+                }}
+            >
+                ถัดไป (Next)
+            </button>
+        </div>
+    );
+
     return (
         <div className="container mt-5">
-            <div className="card shadow-sm border-0 p-3">
-                <div className="card-body">
-                    {renderPhysicalsTable()}
-                    <hr className="my-5" />
-                    {renderEquipmentTable()}
-                    <hr className="my-5" />
-                    {renderTechnicalTable()}
-                    <hr className="my-5" />
-                    {renderGeneralComments()}
-                    {renderTotalScore()}
+            {/* เพิ่ม style tag สำหรับ print styles */}
+            <style>{`
+            @media print {
+                body {
+                  margin: 0;
+                  padding: 0;
+                  -webkit-print-color-adjust: exact;
+                  page-break-after: always;
+                }
+                
+                .container {
+                  width: 100%;
+                  max-width: none;
+                  padding: 0;
+                  margin: 0;
+                }
+                
+                /* ซ่อนส่วนที่ไม่ต้องการให้พิมพ์ */
+                .d-print-none, .card, .form-control, input[type=text], textarea, button, img, .modal-backdrop, .modal-open .modal, .mb-2 > input[type=text] {
+                  display: none !important;
+                }
+                
+                /* แสดงเฉพาะตารางและส่วนข้อมูลที่ต้องการพิมพ์ */
+                .table-responsive, .table, .card-body, .total-score-container, .general-comments-container, .card {
+                  display: block !important;
+                }
+                
+                /* ปรับปรุงการแสดงผลของตาราง */
+                table {
+                  width: 100%;
+                  border-collapse: collapse;
+                  margin-bottom: 1rem;
+                  table-layout: fixed; /* แก้ไข: ทำให้ตารางไม่เกินขอบ */
+                }
+                th, td {
+                  border: 1px solid #dee2e6 !important;
+                  padding: 0.3rem;
+                  vertical-align: top;
+                  font-size: 11px;
+                  color: #000;
+                }
+                
+                /* ซ่อน input และ textarea ที่ไม่ได้ใช้งาน */
+                .form-control, input, textarea {
+                  visibility: hidden;
+                  display: none;
+                }
+                
+                /* ปรับแต่งส่วน Physicals Check list ให้แสดงผลเป็น 2 คอลัมน์ */
+                .physical-row {
+                    display: flex;
+                    flex-wrap: nowrap;
+                    justify-content: space-between;
+                    width: 95%; /* กำหนดความกว้างเพื่อจัดกึ่งกลาง */
+                    margin: 0 auto; /* ทำให้บล็อกตารางอยู่กึ่งกลาง */
+                }
+                .physical-col {
+                    flex: 0 0 48%;
+                    max-width: 48%;
+                    padding-right: 15px;
+                    padding-left: 15px;
+                }
+                .no-page-break {
+                    page-break-inside: avoid;
+                }
+            }
+            `}</style>
+
+            {/* โค้ดสำหรับแสดงผลบนหน้าจอปกติ */}
+            <div className="d-block d-print-none">
+                <div className="card shadow-sm border-0 p-3">
+                    <div className="card-body">
+                        {renderPhysicalsTable()}
+                        <hr className="my-5" />
+                        {renderEquipmentTable()}
+                        <hr className="my-5" />
+                        {renderTechnicalTable()}
+                        <hr className="my-5" />
+                        {renderGeneralComments()}
+                        {renderTotalScore()}
+                        {renderButtons()}
+                    </div>
                 </div>
+                {/* ส่วน Modal ต่างๆ (แสดงบนหน้าจอเท่านั้น) */}
+                {isModalOpen && (
+                    <div
+                        className="modal show d-block"
+                        tabIndex={-1}
+                        style={{
+                            position: 'fixed',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                        }}
+                    >
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">เลือกสถานะ</h5>
+                                    <button type="button" className="btn-close" onClick={closeModal}></button>
+                                </div>
+                                <div className="modal-body">
+                                    <button className="btn btn-success w-100 mb-2" onClick={() => handleStatusChange('OK')}>OK</button>
+                                    <button className="btn btn-danger w-100 mb-2" onClick={() => handleStatusChange('Fault')}>Fault</button>
+                                    <button className="btn btn-warning w-100" onClick={() => handleStatusChange('Overload')}>Overload</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {isTechnicalModalOpen && (
+                    <div
+                        className="modal show d-block"
+                        tabIndex={-1}
+                        style={{
+                            position: 'fixed',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                        }}
+                    >
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">เลือกสถานะ</h5>
+                                    <button type="button" className="btn-close" onClick={closeModal}></button>
+                                </div>
+                                <div className="modal-body">
+                                    <button className="btn btn-success w-100 mb-2" onClick={() => handleTechnicalStatusChange('OK')}>OK</button>
+                                    <button className="btn btn-secondary w-100" onClick={() => handleTechnicalStatusChange('5_points')}>5คะแนน</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
-            {isModalOpen && (
-                <div
-                    className="modal show d-block"
-                    tabIndex={-1}
-                    style={{
-                        position: 'fixed',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                    }}
-                >
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">เลือกสถานะ</h5>
-                                <button type="button" className="btn-close" onClick={closeModal}></button>
-                            </div>
-                            <div className="modal-body">
-                                <button className="btn btn-success w-100 mb-2" onClick={() => handleStatusChange('OK')}>OK</button>
-                                <button className="btn btn-danger w-100 mb-2" onClick={() => handleStatusChange('Fault')}>Fault</button>
-                                <button className="btn btn-warning w-100" onClick={() => handleStatusChange('Overload')}>Overload</button>
-                            </div>
+            {/* โค้ดสำหรับแสดงผลเฉพาะในหน้าพิมพ์ */}
+            <div className="d-none d-print-block">
+                {/* Physicals Check list */}
+                <div className="no-page-break">
+                    <h4 className="fw-bold text-primary mb-3">Physicals Check list</h4>
+                    <div className="row physical-row mb-4">
+                        <div className="col-6 physical-col">
+                            <table className="table table-bordered">
+                                <tbody>
+                                    {/* แสดง 4 รายการแรกในตารางซ้าย */}
+                                    {newPhysicalItems.slice(0, 4).map((item) => (
+                                        <tr key={item.id}>
+                                            <td style={{ width: '80%' }}>{item.item}</td>
+                                            <td style={{ width: '20%' }} className="text-center">{physicalValues[item.item]}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="col-6 physical-col">
+                            <table className="table table-bordered">
+                                <tbody>
+                                    {/* แสดง 4 รายการหลังในตารางขวา */}
+                                    {newPhysicalItems.slice(4, 8).map((item) => (
+                                        <tr key={item.id}>
+                                            <td style={{ width: '80%' }}>{item.item}</td>
+                                            <td style={{ width: '20%' }} className="text-center">{physicalValues[item.item]}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-            )}
 
-            {isTechnicalModalOpen && (
-                <div
-                    className="modal show d-block"
-                    tabIndex={-1}
-                    style={{
-                        position: 'fixed',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                    }}
-                >
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">เลือกสถานะ</h5>
-                                <button type="button" className="btn-close" onClick={closeModal}></button>
+                {/* Equipment check list */}
+                <div className="no-page-break">
+                    <h4 className="fw-bold text-primary mb-3">Equipment check list</h4>
+                    <table className="table table-bordered text-center">
+                        <thead>
+                            <tr>
+                                <th scope="col" style={{ width: '5%' }}></th>
+                                <th scope="col" style={{ width: '15%' }}>Item</th>
+                                <th scope="col" style={{ width: '15%' }}>Actual</th>
+                                <th scope="col" colSpan={2} style={{ width: '25%' }}>Condition</th>
+                                <th scope="col" style={{ width: '40%' }}>Remark</th>
+                            </tr>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col" className="text-center">Status</th>
+                                <th scope="col" className="text-center">Fault</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {equipment.map((item) => (
+                                <tr key={item.id}>
+                                    <td>
+                                        {item.image ? (
+                                            <img src={item.image} alt="preview" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+                                        ) : (
+                                            ''
+                                        )}
+                                    </td>
+                                    <td className="text-start">{item.item}</td>
+                                    <td className="text-center">{item.actual} {item.unit}</td>
+                                    <td className="text-center">{item.condition.status}</td>
+                                    <td className="text-start">{item.condition.fault}</td>
+                                    <td className="text-start">{item.remark}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Technical- Operation */}
+                <div className="page-break-before no-page-break">
+                    <h4 className="fw-bold text-primary mb-3">Technical- Operation</h4>
+                    <div className="mb-3">
+                        <h5 className="form-label fw-bold">Operation Testing</h5>
+                        <p>{operationTesting}</p>
+                    </div>
+                    <table className="table table-bordered text-center">
+                        <thead>
+                            <tr>
+                                <th scope="col" style={{ width: '5%' }}></th>
+                                <th scope="col" style={{ width: '30%' }}>Item</th>
+                                <th scope="col" colSpan={2} style={{ width: '15%' }}>Result</th>
+                                <th scope="col" style={{ width: '50%' }}>Comment</th>
+                            </tr>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col" className="text-center">Status</th>
+                                <th scope="col" className="text-center">Score</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {technical.map((item) => (
+                                <tr key={item.id}>
+                                    <td>
+                                        {item.image ? (
+                                            <img src={item.image} alt="preview" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+                                        ) : (
+                                            ''
+                                        )}
+                                    </td>
+                                    <td className="text-start">{item.item}</td>
+                                    <td className="text-center">{item.status}</td>
+                                    <td className="text-center">{item.status === '5_points' ? item.resultText : ''}</td>
+                                    <td className="text-start">{item.comment}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* General Comments */}
+                <div className="no-page-break">
+                    <h4 className="fw-bold text-primary mb-3">General Comments</h4>
+                    <p>{generalComments}</p>
+                    <div className="d-flex justify-content-end align-items-center mt-2">
+                        <h5 className="me-2 mb-0">คะแนน (เต็ม 10 คะแนน):</h5>
+                        <span>{generalCommentScore}</span>
+                    </div>
+                </div>
+
+                {/* Total Score */}
+                <div className="no-page-break">
+                    <div className="total-score-container mt-4 mb-5">
+                        <div className="d-flex flex-column align-items-end">
+                            <div className="d-flex align-items-center mb-2">
+                                <h5 className="me-2 mb-0">คะแนนที่ได้:</h5>
+                                <span className="fw-bold">{totalScore}</span>
                             </div>
-                            <div className="modal-body">
-                                <button className="btn btn-success w-100 mb-2" onClick={() => handleTechnicalStatusChange('OK')}>OK</button>
-                                <button className="btn btn-secondary w-100" onClick={() => handleTechnicalStatusChange('5_points')}>5คะแนน</button>
+                            <div className="d-flex align-items-center mb-2">
+                                <h5 className="me-2 mb-0">คะแนนเต็ม:</h5>
+                                <span className="fw-bold">{maxPossibleScore}</span>
+                            </div>
+                            <div className="d-flex align-items-center">
+                                <h5 className="me-2 mb-0">เปอร์เซ็นต์:</h5>
+                                <span className="fw-bold">{percentage}%</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            )}
+            </div>
         </div>
     );
 };
