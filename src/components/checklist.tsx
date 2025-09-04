@@ -25,13 +25,13 @@ export interface PhysicalChecklistItem {
 export interface TechnicalChecklistItem {
     id: string;
     item: string;
-    result: 'OK' | '5_points';
+    result: 'OK' | 'ใส่คะแนน' | '';
     checked: boolean;
     comment?: string;
     // เพิ่ม field ใหม่สำหรับช่องกรอกข้อความใน Result
     resultText?: string;
     // เพิ่มสถานะใหม่สำหรับ Result ที่จะใช้ในการเลือก
-    status: 'OK' | '5_points';
+    status: 'OK' | 'ใส่คะแนน' | 'NONE';
     image?: string; // เพิ่ม field สำหรับเก็บ URL รูปภาพ
 }
 
@@ -45,13 +45,13 @@ interface CombinedChecklistProps {
 const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technicalItems }) => {
     // สร้างรายการ Physicals ใหม่ตามที่ผู้ใช้ร้องขอ
     const newPhysicalItems: PhysicalChecklistItem[] = [
-        { id: 'ph', item: 'Plant Housing', value: '' },
+        { id: 'ph', item: 'Plant Housing (5)', value: '' },
         { id: 'cb', item: 'Chassis base', value: '' },
-        { id: 'v', item: 'Ventilation', value: '' },
-        { id: 'sd', item: 'Safety device', value: '' },
-        { id: 'bp', 'item': 'Body paint', value: '' },
-        { id: 'orf', item: 'Opr risk free', value: '' },
-        { id: 's', item: 'Staffing', value: '' },
+        { id: 'v', item: 'Ventilation (5)', value: '' },
+        { id: 'sd', item: 'Safety device (5)', value: '' },
+        { id: 'bp', 'item': 'Body paint (5)', value: '' },
+        { id: 'orf', item: 'Opr risk free (5)', value: '' },
+        { id: 's', item: 'Staffing (5)', value: '' },
         { id: 'rh', item: 'Run Hours', value: '' },
     ];
 
@@ -91,7 +91,7 @@ const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technical
 
         // คำนวณคะแนนจาก Technical-Operation
         const technicalScore: number = technical.reduce((sum: number, item) => {
-            if (item.status === '5_points') {
+            if (item.status === 'ใส่คะแนน') {
                 const num = Number(item.resultText);
                 return sum + (isNaN(num) ? 0 : num);
             }
@@ -105,7 +105,7 @@ const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technical
 
         // คำนวณคะแนนเต็มแบบไดนามิก
         const physicalMaxScore = Object.values(physicalValues).filter(value => !isNaN(Number(value)) && String(value).trim() !== '').length * 5;
-        const technicalMaxScore = technical.filter(item => item.status === '5_points' && item.resultText && String(item.resultText).trim() !== '').length * 5;
+        const technicalMaxScore = technical.filter(item => item.status === 'ใส่คะแนน' && item.resultText && String(item.resultText).trim() !== '').length * 5;
         const generalMaxScore = generalCommentScore && String(generalCommentScore).trim() !== '' && !isNaN(Number(generalCommentScore)) ? 10 : 0;
         const calculatedMaxPossibleScore = physicalMaxScore + technicalMaxScore + generalMaxScore;
 
@@ -190,16 +190,23 @@ const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technical
     };
 
     // ฟังก์ชันสำหรับจัดการการเปลี่ยนแปลงค่าใน Modal (Technical)
-    const handleTechnicalStatusChange = (newStatus: 'OK' | '5_points') => {
+    const handleTechnicalStatusChange = (newStatus: 'OK' | 'ใส่คะแนน' | 'NONE') => {
         if (selectedTechnicalItem) {
             setTechnical(prevTechnical =>
                 prevTechnical.map(item =>
-                    item.id === selectedTechnicalItem.id ? { ...item, status: newStatus, checked: newStatus === 'OK' } : item
+                    item.id === selectedTechnicalItem.id
+                        ? {
+                            ...item,
+                            status: newStatus,
+                            checked: newStatus === 'OK'
+                        }
+                        : item
                 )
             );
             closeModal();
         }
     };
+
 
     // ฟังก์ชันสำหรับจัดการการเปลี่ยนแปลงข้อความในช่อง Remark (Equipment)
     const handleRemarkChange = (id: string, newRemark: string) => {
@@ -419,7 +426,12 @@ const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technical
                                         onClick={() => openTechnicalModal(item)}
                                         style={{ cursor: 'pointer' }}
                                     >
-                                        {item.status === 'OK' ? 'OK' : '5คะแนน'}
+                                        {item.status === 'OK'
+                                            ? 'OK'
+                                            : item.status === 'ใส่คะแนน'
+                                                ? 'ใส่คะแนน'
+                                                : 'ไม่มี'}
+
                                     </span>
                                 )}
                             </td>
@@ -477,13 +489,16 @@ const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technical
                     <div className="d-flex justify-content-end align-items-center mt-2">
                         <h5 className="me-2 mb-0">คะแนน (เต็ม 10 คะแนน):</h5>
                         <input
-                            type="number"
+                            type="text"
                             className="form-control"
-                            style={{ width: '60px' }}
                             value={generalCommentScore}
-                            onChange={(e) => setGeneralCommentScore(e.target.value)}
-                            min="0"
-                            max="10"
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (!isNaN(Number(value)) || value === '') {
+                                    setGeneralCommentScore(value);
+                                }
+                            }}
+                            style={{ width: '60px' }} // กำหนดความกว้างได้ตามใจ
                         />
                     </div>
                 </div>
@@ -663,8 +678,10 @@ const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technical
                                 </div>
                                 <div className="modal-body">
                                     <button className="btn btn-success w-100 mb-2" onClick={() => handleTechnicalStatusChange('OK')}>OK</button>
-                                    <button className="btn btn-secondary w-100" onClick={() => handleTechnicalStatusChange('5_points')}>5คะแนน</button>
+                                    <button className="btn btn-secondary w-100 mb-2" onClick={() => handleTechnicalStatusChange('ใส่คะแนน')}>5คะแนน</button>
+                                    <button className="btn btn-outline-danger w-100 " onClick={() => handleTechnicalStatusChange('NONE')}>ไม่มี</button>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -783,7 +800,7 @@ const Checklist: React.FC<CombinedChecklistProps> = ({ equipmentItems, technical
                                     </td>
                                     <td className="text-start">{item.item}</td>
                                     <td className="text-center">{item.status}</td>
-                                    <td className="text-center">{item.status === '5_points' ? item.resultText : ''}</td>
+                                    <td className="text-center">{item.status === 'ใส่คะแนน' ? item.resultText : ''}</td>
                                     <td className="text-start">{item.comment}</td>
                                 </tr>
                             ))}

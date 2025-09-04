@@ -39,10 +39,10 @@ const technicalItems: TechnicalChecklistItem[] = [
     { id: '5', item: 'Utility connecting (การเชื่อมต่อระบบ)', result: 'OK', checked: true, status: 'OK' },
     { id: '6', item: 'Operation (การปฏิบัติการ)', result: 'OK', checked: true, status: 'OK' },
     { id: '7', item: 'Sparepart (การเตรียมอะไหล่สำรอง)', result: 'OK', checked: true, status: 'OK' },
-    { id: '8', item: 'Service by and warrantee (....12...) Months', result: 'OK', checked: true, status: 'OK' },
+    { id: '8', item: 'Service by and warrantee (....12...) Months (5)', result: 'ใส่คะแนน', checked: true, status: 'ใส่คะแนน' },
     { id: '9', item: 'Remote On line', result: 'OK', checked: true, status: 'OK' },
     { id: '10', item: 'Control Panel', result: 'OK', checked: true, status: 'OK' },
-    { id: '11', item: 'Manual and Training document', result: 'OK', checked: true, status: 'OK' },
+    { id: '11', item: 'Manual and Training document (5)', result: 'OK', checked: true, status: 'OK' },
 ];
 
 const systemData = {
